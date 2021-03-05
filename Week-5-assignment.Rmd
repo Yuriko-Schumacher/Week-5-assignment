@@ -10,7 +10,7 @@ library(tidyverse)
 data.meta <- read.csv('data/population.row/Metadata_Country_API_SP.POP.TOTL_DS2_en_csv_v2_2106202.csv', na.strings=c("", "NULL"))
 countries <- data.meta %>% 
   filter(Region != is.na(Region))
-countrycodes <- as.string(countries$Country.Code)
+countrycodes <- append(as.character(countries$Country.Code), "WLD")
 
 data.row <- read.csv('data/population.csv')
 

@@ -25,6 +25,11 @@ d3.csv("data/population.countries.csv").then(function (d) {
 		.domain(d3.extent(countriesData, (d) => d.population))
 		.range([size.h, 0]);
 
+	scaleDuration = d3
+		.scaleLinear()
+		.domain(d3.extent(countriesData, (d) => d.population).reverse())
+		.range([0, 5000]);
+
 	let axisX = d3.axisBottom(scaleX).tickFormat((d) => d);
 	let axisXG = containerG
 		.append("g")
@@ -60,7 +65,7 @@ function parseData(d) {
 
 function draw(data) {
 	data = d3.group(data, (d) => d.countryName);
-	data = Array.from(data).filter((el) => el[0] !== "World");
+	data = Array.from(data);
 	console.log(data);
 	data.forEach((el) => {
 		let data = el[1];
@@ -90,7 +95,11 @@ function draw(data) {
 		path.attr("stroke-dasharray", `${totalLength} ${totalLength}`)
 			.attr("stroke-dashoffset", totalLength)
 			.transition()
-			.duration(5000)
+			.duration((d) =>
+				d[59].population > 2 * 10 ** 8
+					? scaleDuration(2 * 10 ** 8)
+					: scaleDuration(d[59].population)
+			)
 			.attr("stroke-dashoffset", 0);
 	});
 }
