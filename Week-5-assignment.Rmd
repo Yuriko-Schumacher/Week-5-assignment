@@ -1,0 +1,28 @@
+---
+title: "Week-5-assignment"
+author: "Yuriko Schumacher"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+
+data.meta <- read.csv('data/population.row/Metadata_Country_API_SP.POP.TOTL_DS2_en_csv_v2_2106202.csv', na.strings=c("", "NULL"))
+countries <- data.meta %>% 
+  filter(Region != is.na(Region))
+countrycodes <- as.string(countries$Country.Code)
+
+data.row <- read.csv('data/population.csv')
+
+data <- data.row %>% 
+  select(-Indicator.Name, -Indicator.Code,
+         countryName = Country.Name,
+         countryCode = Country.Code) %>% 
+  filter(countryCode %in% countrycodes) %>% 
+  pivot_longer(cols = X1960:X2020, names_to = "year", values_to = "population") %>% 
+  mutate(year = str_sub(year, start = 2))
+
+write_csv(data, "data/population.countries.csv")
+
+```
+
